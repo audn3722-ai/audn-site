@@ -1,0 +1,38 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, url, fmtDate, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date);
+---
+<Base lang={lang} title={d.nav.news} path="/news/">
+  <div class="page-head"><div class="wrap"><div class="eyebrow">{d.short}</div><h1>{d.nav.news}</h1></div></div>
+  <section>
+    <div class="wrap">
+      {news.length === 0 ? <p class="lead">{d.noNews}</p> : (
+        <div class="grid g3">
+          {news.map((n) => (
+            <a class="card news" href={url(`/${lang}/news/${n.id}/`)}>
+              {n.data.image && <img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" />}
+              <div class="in">
+                <time>{fmtDate(n.data.date, lang)}</time>
+                <h3>{n.data.title}</h3>
+                {n.data.summary && <p>{n.data.summary}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
+<style>
+  .news { text-decoration: none; color: inherit; padding: 0; overflow: hidden; transition: .2s; }
+  .news:hover { box-shadow: 0 14px 30px rgba(11,31,75,.1); }
+  .news img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+  .in { padding: 20px 22px 24px; }
+  time { color: var(--muted); font-size: 14px; } h3 { margin: 6px 0; } p { color: var(--muted); margin: 0; }
+</style>

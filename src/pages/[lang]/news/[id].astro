@@ -1,0 +1,27 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { t, url, fmtDate, type Lang } from '../../../i18n';
+export async function getStaticPaths() {
+  const all = await getCollection('news', (n) => !n.data.draft);
+  return all.map((n) => ({ params: { lang: n.data.lang, id: n.id }, props: { n } }));
+}
+const { n } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const { Content } = await render(n);
+---
+<Base lang={lang} title={n.data.title} path={`/news/`} description={n.data.summary}>
+  <div class="page-head"><div class="wrap"><div class="eyebrow">{fmtDate(n.data.date, lang)}</div><h1>{n.data.title}</h1></div></div>
+  <section>
+    <article class="wrap prose">
+      {n.data.image && <img class="cover" src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" />}
+      <Content />
+      <p><a href={url(`/${lang}/news/`)}>{d.back}</a></p>
+    </article>
+  </section>
+</Base>
+<style>
+  .cover { border-radius: var(--radius); margin-bottom: 24px; width: 100%; }
+  article :global(img) { border-radius: 10px; }
+</style>
