@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import DocList from '../../../components/DocList.astro';
+import PageHead from '../../../components/PageHead.astro';
 import { t, url, programs, langs, type Lang } from '../../../i18n';
 export const getStaticPaths = () =>
   langs.flatMap((lang) => programs.map((p) => ({ params: { lang, slug: p.slug } })));
@@ -11,7 +12,7 @@ const c = p[lang];
 const careersT = lang === 'ru' ? 'Где работают выпускники' : 'Бүтүрүүчүлөр кайда иштешет';
 ---
 <Base lang={lang} title={c.title} path={`/programs/${p.slug}/`} description={c.short}>
-  <div class="page-head"><div class="wrap"><div class="eyebrow">{p.code}</div><h1>{c.title}</h1></div></div>
+  <PageHead lang={lang} title={c.title} eyebrow={`${d.nav.programs} · ${p.code}`} path={`/programs/${p.slug}/`} />
   <section>
     <div class="wrap layout">
       <div class="prose">
