@@ -14,10 +14,10 @@ const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data
     <div class="wrap">
       {news.length === 0 ? <p class="lead">{d.noNews}</p> : (
         <>
-        <div class="filter">
-          <button class="on" data-f="all">{d.all}</button>
-          <button data-f="news">{d.nav.news}</button>
-          <button data-f="announcement">{d.announcements}</button>
+        <div class="filter" role="group" aria-label={d.nav.news}>
+          <button type="button" class="on" aria-pressed="true" data-f="all">{d.all}</button>
+          <button type="button" aria-pressed="false" data-f="news">{d.nav.news}</button>
+          <button type="button" aria-pressed="false" data-f="announcement">{d.announcements}</button>
         </div>
         <div class="grid g3" id="list">
           {news.map((n) => (
@@ -38,7 +38,7 @@ const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data
 </Base>
 <script>
   document.querySelectorAll<HTMLButtonElement>('.filter button').forEach((b) => b.addEventListener('click', () => {
-    document.querySelectorAll('.filter button').forEach((x) => x.classList.toggle('on', x === b));
+    document.querySelectorAll('.filter button').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
     document.querySelectorAll<HTMLElement>('#list > a').forEach((a) => { a.style.display = b.dataset.f === 'all' || a.dataset.kind === b.dataset.f ? '' : 'none'; });
   }));
 </script>
