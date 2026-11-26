@@ -1,0 +1,20 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import DocList from '../../../components/DocList.astro';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const intro = { ru: 'Актуальное расписание занятий по группам. Следите за обновлениями в разделе «Новости».', kg: 'Топтор боюнча сабактардын учурдагы жадыбалы. Жаңыртууларды «Жаңылыктар» бөлүмүнөн көрүп туруңуз.' }[lang];
+---
+<Base lang={lang} title={d.nav.schedule} path="/students/schedule/">
+  <PageHead lang={lang} title={d.nav.schedule} path="/students/schedule/" />
+  <section>
+    <div class="wrap">
+      <p class="lead">{intro}</p>
+      <DocList lang={lang} categories={['schedule']} />
+    </div>
+  </section>
+</Base>
+<style>.lead { margin-bottom: 28px; }</style>

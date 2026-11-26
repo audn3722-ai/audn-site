@@ -1,0 +1,20 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import DocList from '../../../components/DocList.astro';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const intro = { ru: 'Методические материалы, образцы документов и полезные ссылки для студентов.', kg: 'Студенттер үчүн методикалык материалдар, документтердин үлгүлөрү жана пайдалуу шилтемелер.' }[lang];
+---
+<Base lang={lang} title={d.nav.materials} path="/students/materials/">
+  <PageHead lang={lang} title={d.nav.materials} path="/students/materials/" />
+  <section>
+    <div class="wrap">
+      <p class="lead">{intro}</p>
+      <DocList lang={lang} categories={['materials']} />
+    </div>
+  </section>
+</Base>
+<style>.lead { margin-bottom: 28px; }</style>

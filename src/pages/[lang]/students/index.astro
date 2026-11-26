@@ -1,0 +1,47 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { t, url, menu, fmtDate, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const items = menu.find((m) => m.key === 'students')!.children!;
+const desc = {
+  ru: { schedule: 'Расписание занятий по группам', practice: 'Положения, дневники и сроки практики', materials: 'Методички, образцы и ссылки' },
+  kg: { schedule: 'Топтор боюнча сабактардын жадыбалы', practice: 'Жоболор, күндөлүктөр жана мөөнөттөр', materials: 'Методичкалар, үлгүлөр жана шилтемелер' },
+}[lang] as Record<string, string>;
+const ann = (await getCollection('news', (n) => n.data.lang === lang && n.data.kind === 'announcement' && !n.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date).slice(0, 5);
+---
+<Base lang={lang} title={d.nav.students} path="/students/">
+  <PageHead lang={lang} title={d.nav.students} path="/students/" />
+  <section>
+    <div class="wrap">
+      <div class="grid g3">
+        {items.map((c) => (
+          <a class="card tile" href={url(`/${lang}/${c.path}`)}>
+            <h3>{d.nav[c.key]}</h3><p>{desc[c.key]}</p><span>{d.more} →</span>
+          </a>
+        ))}
+      </div>
+      <h2 class="h">{d.announcements}</h2>
+      {ann.length === 0 ? <p class="muted">{d.noNews}</p> : (
+        <ul class="ann">
+          {ann.map((n) => <li><time>{fmtDate(n.data.date, lang)}</time><a href={url(`/${lang}/news/${n.id}/`)}>{n.data.title}</a></li>)}
+        </ul>
+      )}
+    </div>
+  </section>
+</Base>
+<style>
+  .tile { text-decoration: none; color: inherit; border-top: 4px solid var(--navy); transition: .2s; }
+  .tile:hover { border-top-color: var(--red); box-shadow: 0 14px 30px rgba(11,31,75,.1); }
+  .tile p { color: var(--muted); } .tile span { color: var(--red); font-weight: 600; }
+  .h { margin-top: 56px; font-size: 26px; }
+  .muted { color: var(--muted); }
+  .ann { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .ann li { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--red); border-radius: 10px; padding: 14px 18px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .ann time { color: var(--muted); font-size: 14px; min-width: 140px; }
+  .ann a { font-weight: 600; text-decoration: none; }
+</style>
