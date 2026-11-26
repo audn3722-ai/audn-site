@@ -1,10 +1,10 @@
 ---
-import { t, url, menu, type Lang } from '../i18n';
+import { t, url, sectionOf, type Lang } from '../i18n';
 interface Props { lang: Lang; title: string; eyebrow?: string; path: string }
 const { lang, title, eyebrow, path } = Astro.props;
 const d = t[lang];
 const cur = path.replace(/^\//, '');
-const section = menu.find((m) => m.children && (m.path === cur || m.children.some((c) => c.path === cur)));
+const section = sectionOf(cur);
 ---
 <div class="page-head">
   <div class="wrap">
@@ -12,14 +12,14 @@ const section = menu.find((m) => m.children && (m.path === cur || m.children.som
     <h1>{title}</h1>
     {section && (
       <nav class="tabs" aria-label={d.sectionNav}>
-        {section.children!.map((c) => <a href={url(`/${lang}/${c.path}`)} class={c.path === cur ? 'on' : ''} aria-current={c.path === cur ? 'page' : undefined}>{d.nav[c.key]}</a>)}
+        {section.children.map((c) => <a href={url(`/${lang}/${c.path}`)} class={c.path === cur ? 'on' : ''} aria-current={c.path === cur ? 'page' : undefined}>{d.nav[c.key]}</a>)}
       </nav>
     )}
   </div>
 </div>
 <style>
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
-  .tabs a { color: #dfe6f5; text-decoration: none; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); font-size: 15px; }
-  .tabs a:hover { border-color: #fff; color: #fff; }
-  .tabs a.on { background: #fff; color: var(--navy); border-color: #fff; font-weight: 600; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 36px; border-bottom: 1px solid #333; }
+  .tabs a { color: #d6d6d6; text-decoration: none; padding: 12px 0; font-size: 15.5px; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+  .tabs a:hover { color: #fff; border-bottom-color: #555; }
+  .tabs a.on { color: #fff; border-bottom-color: var(--gold); font-weight: 600; }
 </style>
