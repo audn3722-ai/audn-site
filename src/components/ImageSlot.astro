@@ -1,0 +1,27 @@
+---
+// Фото или место для вставки фото (заполняется через админку)
+import { fileUrl, type Lang } from '../i18n';
+interface Props { src?: string | null; alt?: string; ratio?: string; size?: string; lang: Lang; class?: string; dark?: boolean; round?: boolean; corner?: boolean }
+const { src, alt = '', ratio = '4 / 3', size = '1200 × 900', lang, class: cls = '', dark = false, round = false, corner = false } = Astro.props;
+const label = lang === 'kg' ? 'Сүрөт үчүн орун' : 'Место для фото';
+---
+{src ? (
+  <img class={`slot-img ${cls}`} src={fileUrl(src)} alt={alt} loading="lazy" style={`aspect-ratio:${ratio}`} />
+) : (
+  <div class={`slot ${dark ? 'dark' : ''} ${round ? 'round' : ''} ${corner ? 'corner' : ''} ${cls}`} style={`aspect-ratio:${ratio}`} aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 8"/></svg>
+    {!round && <span>{label}<small>{size} px</small></span>}
+  </div>
+)}
+<style>
+  .slot-img { width: 100%; object-fit: cover; display: block; }
+  .slot { width: 100%; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center;
+    background: repeating-linear-gradient(135deg, #eef1f7 0 14px, #e7ebf3 14px 28px); border: 2px dashed #b8c2d6; color: #6b7690; }
+  .slot span { font: 600 15px Montserrat, sans-serif; display: grid; gap: 4px; }
+  .slot small { font: 400 13px Inter, sans-serif; opacity: .8; }
+  .slot.dark { background: repeating-linear-gradient(135deg, #13306b 0 14px, #102a5e 14px 28px); border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.6); }
+  .slot.corner { place-content: start end; justify-items: end; padding: 18px 22px; grid-auto-flow: column; align-items: center; gap: 10px; text-align: right; }
+  .slot.corner svg { width: 24px; height: 24px; }
+  .slot.round { border-radius: 50%; border-width: 1.5px; }
+  .slot.round svg { width: 24px; height: 24px; }
+</style>
