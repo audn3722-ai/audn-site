@@ -17,7 +17,7 @@ const careersT = lang === 'ru' ? 'Где работают выпускники' 
       <div class="prose">
         <p class="lead">{c.short}</p>
         {c.text.map((x) => <p>{x}</p>)}
-        <h3 style="margin-top:30px">{d.plan}</h3>
+        <h2 class="plan">{d.plan}</h2>
         <DocList lang={lang} categories={[`plan-${p.slug}`]} />
         <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.apply}</a>
       </div>
@@ -33,4 +33,5 @@ const careersT = lang === 'ru' ? 'Где работают выпускники' 
   @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
   ul { padding-left: 18px; margin: 0; } li { margin: 6px 0; } li::marker { color: var(--red); }
   .btn { margin-top: 26px; }
+  .plan { font-size: 20px; margin-top: 30px; }
 </style>
