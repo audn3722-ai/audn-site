@@ -44,7 +44,7 @@ const teachers = defineCollection({
 // Документы (PDF): устав, лицензия, расписание, практика, учебные планы и т.д.
 export const docCategories = [
   'charter', 'license', 'regulations', 'plan-law', 'plan-pedagogy',
-  'calendar', 'schedule', 'practice', 'materials',
+  'calendar', 'schedule', 'practice', 'materials', 'research',
 ] as const;
 const documents = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/documents' }),
