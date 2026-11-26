@@ -16,7 +16,7 @@ const map = 'https://www.openstreetmap.org/export/embed.html?bbox=72.96%2C40.91%
         <div><span>{d.email}</span><p>{info.email ? <a href={`mailto:${info.email}`}>{info.email}</a> : d.tbd}</p></div>
         <div><span>{d.rector}</span><p>{info.rector[lang]}</p></div>
       </div>
-      <iframe class="map" src={map} title="map" loading="lazy"></iframe>
+      <iframe class="map" src={map} title={d.map} loading="lazy"></iframe>
     </div>
   </section>
 </Base>

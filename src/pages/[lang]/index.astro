@@ -32,13 +32,13 @@ const L = {
           <a class="btn btn-ghost" href={url(`/${lang}/programs/`)}>{d.nav.programs}</a>
         </div>
       </div>
-      <div class="hero-art"><img src={url('/img/emblem-white.png')} alt="" width="461" height="381" /></div>
+      <div class="hero-art" aria-hidden="true"><img src={url('/img/emblem-white.png')} alt="" width="461" height="381" /></div>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <div class="eyebrow">{L.dirs}</div>
+      <h2 class="eyebrow">{L.dirs}</h2>
       <div class="grid g2">
         {programs.map((p) => (
           <a class="card prog" href={url(`/${lang}/programs/${p.slug}/`)}>
@@ -74,7 +74,7 @@ const L = {
         <div class="grid g3">
           {news.map((n) => (
             <a class="card news" href={url(`/${lang}/news/${n.id}/`)}>
-              {n.data.image && <img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" />}
+              {n.data.image && <img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" width="640" height="400" />}
               <time>{fmtDate(n.data.date, lang)}</time>
               <h3>{n.data.title}</h3>
             </a>
