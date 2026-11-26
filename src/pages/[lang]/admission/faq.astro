@@ -1,0 +1,31 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { getCollection, render } from 'astro:content';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const list = (await getCollection('faq', (x) => x.data.lang === lang)).sort((a, b) => a.data.order - b.data.order);
+const items = await Promise.all(list.map(async (x) => ({ q: x.data.question, C: (await render(x)).Content })));
+---
+<Base lang={lang} title={d.nav.faq} path="/admission/faq/">
+  <PageHead lang={lang} title={d.nav.faq} path="/admission/faq/" />
+  <section>
+    <div class="wrap faq">
+      {items.map(({ q, C }) => (
+        <details><summary>{q}</summary><div class="a"><C /></div></details>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>
+  .faq { max-width: 860px; display: grid; gap: 12px; }
+  details { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 0 22px; }
+  summary { cursor: pointer; list-style: none; padding: 18px 0; font: 700 17px Montserrat, sans-serif; color: var(--navy); display: flex; justify-content: space-between; gap: 16px; }
+  summary::after { content: '+'; color: var(--red); font-size: 22px; line-height: 1; }
+  details[open] summary::after { content: '−'; }
+  summary::-webkit-details-marker { display: none; }
+  .a { padding-bottom: 16px; color: var(--muted); }
+  .a :global(p) { margin: 0 0 .6em; }
+</style>
