@@ -4,14 +4,13 @@ media:
   output: /uploads
 content:
   - name: news
-    label: Новости
+    label: Новости и объявления
     type: collection
     path: src/content/news
-    filename: "{year}-{month}-{day}-{primary}.md"
+    filename: "{year}-{month}-{day}-{hour}{minute}{second}.md"
     view:
-      fields: [title, date, lang]
+      fields: [title, date, kind, lang]
       primary: title
-      sort: [date]
       default:
         sort: date
         order: desc
@@ -24,12 +23,22 @@ content:
         label: Дата
         type: date
         required: true
+      - name: kind
+        label: Тип
+        type: select
+        default: news
+        options:
+          values:
+            - { value: news, label: Новость }
+            - { value: announcement, label: Объявление }
       - name: lang
-        label: Язык (ru — русский, kg — кыргызский)
+        label: Язык
         type: select
         default: ru
         options:
-          values: [ru, kg]
+          values:
+            - { value: ru, label: Русский }
+            - { value: kg, label: Кыргызский }
       - name: summary
         label: Краткое описание (1–2 предложения)
         type: text
@@ -41,5 +50,150 @@ content:
         type: boolean
         default: false
       - name: body
-        label: Текст новости
+        label: Текст
+        type: rich-text
+
+  - name: documents
+    label: Документы (PDF)
+    type: collection
+    path: src/content/documents
+    filename: "doc-{year}{month}{day}-{hour}{minute}{second}.md"
+    view:
+      fields: [title_ru, category]
+      primary: title_ru
+    fields:
+      - name: title_ru
+        label: Название (рус.)
+        type: string
+        required: true
+      - name: title_kg
+        label: Название (кырг.)
+        type: string
+      - name: category
+        label: Раздел сайта
+        type: select
+        required: true
+        options:
+          values:
+            - { value: charter, label: "Документы → Устав и регистрация" }
+            - { value: license, label: "Документы → Лицензия и аккредитация" }
+            - { value: regulations, label: "Документы → Положения и правила" }
+            - { value: plan-law, label: "Учебный план → Юриспруденция" }
+            - { value: plan-pedagogy, label: "Учебный план → Педагогика" }
+            - { value: calendar, label: "Академический календарь" }
+            - { value: schedule, label: "Студентам → Расписание" }
+            - { value: practice, label: "Студентам → Практика" }
+            - { value: materials, label: "Студентам → Полезные материалы" }
+      - name: file
+        label: Файл (PDF, Word, Excel)
+        type: file
+      - name: link
+        label: Или ссылка (если файла нет)
+        type: string
+      - name: date
+        label: Дата
+        type: date
+      - name: order
+        label: Порядок (меньше — выше)
+        type: number
+        default: 100
+
+  - name: teachers
+    label: Преподаватели
+    type: collection
+    path: src/content/teachers
+    filename: "t-{year}{month}{day}-{hour}{minute}{second}.md"
+    view:
+      fields: [name, role_ru, program]
+      primary: name
+    fields:
+      - name: name
+        label: ФИО
+        type: string
+        required: true
+      - name: role_ru
+        label: Должность (рус.), напр. «Старший преподаватель»
+        type: string
+        required: true
+      - name: role_kg
+        label: Должность (кырг.)
+        type: string
+      - name: program
+        label: Направление
+        type: select
+        default: common
+        options:
+          values:
+            - { value: law, label: Юриспруденция }
+            - { value: pedagogy, label: Педагогика }
+            - { value: common, label: Общие дисциплины }
+      - name: disciplines_ru
+        label: Дисциплины (рус.)
+        type: string
+      - name: disciplines_kg
+        label: Дисциплины (кырг.)
+        type: string
+      - name: photo
+        label: Фото
+        type: image
+      - name: order
+        label: Порядок (меньше — выше)
+        type: number
+        default: 100
+
+  - name: leadership
+    label: Руководство
+    type: collection
+    path: src/content/leadership
+    filename: "l-{year}{month}{day}-{hour}{minute}{second}.md"
+    view:
+      fields: [name, role_ru]
+      primary: name
+    fields:
+      - name: name
+        label: ФИО
+        type: string
+        required: true
+      - name: role_ru
+        label: Должность (рус.)
+        type: string
+        required: true
+      - name: role_kg
+        label: Должность (кырг.)
+        type: string
+      - name: photo
+        label: Фото
+        type: image
+      - name: order
+        label: Порядок (меньше — выше)
+        type: number
+        default: 100
+
+  - name: faq
+    label: Вопросы и ответы
+    type: collection
+    path: src/content/faq
+    filename: "faq-{year}{month}{day}-{hour}{minute}{second}.md"
+    view:
+      fields: [question, lang]
+      primary: question
+    fields:
+      - name: question
+        label: Вопрос
+        type: string
+        required: true
+      - name: lang
+        label: Язык
+        type: select
+        default: ru
+        options:
+          values:
+            - { value: ru, label: Русский }
+            - { value: kg, label: Кыргызский }
+      - name: order
+        label: Порядок (меньше — выше)
+        type: number
+        default: 100
+      - name: body
+        label: Ответ
         type: rich-text
