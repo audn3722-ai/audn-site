@@ -1,0 +1,20 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import DocList from '../../../components/DocList.astro';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const intro = { ru: 'График учебного процесса на текущий учебный год: начало и окончание семестров, сессии, каникулы.', kg: 'Учурдагы окуу жылынын окуу процессинин графиги: семестрлердин башталышы жана аякташы, сессиялар, каникулдар.' }[lang];
+---
+<Base lang={lang} title={d.nav.calendar} path="/education/calendar/">
+  <PageHead lang={lang} title={d.nav.calendar} path="/education/calendar/" />
+  <section>
+    <div class="wrap">
+      <p class="lead">{intro}</p>
+      <DocList lang={lang} categories={['calendar']} />
+    </div>
+  </section>
+</Base>
+<style>.lead { margin-bottom: 28px; }</style>
