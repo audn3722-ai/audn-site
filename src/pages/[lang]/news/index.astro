@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { t, url, fmtDate, langs, type Lang } from '../../../i18n';
 export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
@@ -8,8 +9,8 @@ const d = t[lang];
 const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data.draft))
   .sort((a, b) => +b.data.date - +a.data.date);
 ---
-<Base lang={lang} title={d.nav.news} path="/news/">
-  <div class="page-head"><div class="wrap"><div class="eyebrow">{d.short}</div><h1>{d.nav.news}</h1></div></div>
+<Base lang={lang} title={d.nav.newsAll} path="/news/">
+  <PageHead lang={lang} title={d.nav.newsAll} path="/news/" />
   <section>
     <div class="wrap">
       {news.length === 0 ? <p class="lead">{d.noNews}</p> : (
@@ -22,7 +23,7 @@ const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data
         <div class="grid g3" id="list">
           {news.map((n) => (
             <a class="card news" data-kind={n.data.kind} href={url(`/${lang}/news/${n.id}/`)}>
-              {n.data.image && <img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" />}
+              {n.data.image && <span class="zoom"><img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" /></span>}
               <div class="in">
                 <time>{fmtDate(n.data.date, lang)}{n.data.kind === 'announcement' && <span class="badge">{d.announcement}</span>}</time>
                 <h3>{n.data.title}</h3>
@@ -44,12 +45,12 @@ const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data
 </script>
 <style>
   .news { text-decoration: none; color: inherit; padding: 0; overflow: hidden; transition: .2s; }
-  .news:hover { box-shadow: 0 14px 30px rgba(11,31,75,.1); }
-  .news img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+  .news:hover { box-shadow: 0 14px 30px rgba(0,0,0,.08); }
+  .news img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
   .in { padding: 20px 22px 24px; }
-  .badge { margin-left: 10px; background: #fbe9ea; color: var(--red); font: 600 12px Montserrat, sans-serif; padding: 3px 8px; border-radius: 6px; }
+  .badge { margin-left: 10px; background: var(--gold-soft); color: var(--red); font: 500 12px var(--cond); letter-spacing: .08em; padding: 3px 8px; border-radius: 6px; }
   .filter { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-  .filter button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 18px; font: 500 15px Inter, sans-serif; cursor: pointer; color: var(--ink); }
+  .filter button { border: 1px solid var(--line); background: #fff; border-radius: var(--radius); padding: 8px 18px; font: 500 15px var(--sans); cursor: pointer; color: var(--ink); }
   .filter button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
   time { color: var(--muted); font-size: 14px; } h3 { margin: 6px 0; } p { color: var(--muted); margin: 0; }
 </style>
