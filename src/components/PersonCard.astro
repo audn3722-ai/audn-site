@@ -1,14 +1,15 @@
 ---
 import { fileUrl } from '../i18n';
-interface Props { name: string; role: string; photo?: string | null; extra?: string | null }
-const { name, role, photo, extra } = Astro.props;
+interface Props { name: string; role: string; photo?: string | null; extra?: string | null; level?: 2 | 3 }
+const { name, role, photo, extra, level = 3 } = Astro.props;
+const H = level === 2 ? 'h2' : 'h3';
 const initials = name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('');
 ---
 <div class="person">
   {photo ? <img src={fileUrl(photo)} alt={name} loading="lazy" /> : <div class="ph" aria-hidden="true">{initials}</div>}
   <div>
     <span class="role">{role}</span>
-    <h3>{name}</h3>
+    <H class="nm">{name}</H>
     {extra && <p>{extra}</p>}
   </div>
 </div>
@@ -17,6 +18,6 @@ const initials = name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('');
   img, .ph { width: 86px; height: 86px; border-radius: 50%; object-fit: cover; flex: none; }
   .ph { background: #e8ecf5; color: var(--navy); display: grid; place-items: center; font: 800 26px Montserrat, sans-serif; }
   .role { font: 600 12.5px Montserrat, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--red); }
-  h3 { margin: 6px 0 0; font-size: 18px; }
+  .nm { margin: 6px 0 0; font-size: 18px; }
   p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
 </style>

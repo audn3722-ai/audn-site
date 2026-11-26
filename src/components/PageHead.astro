@@ -11,8 +11,8 @@ const section = menu.find((m) => m.children && (m.path === cur || m.children.som
     <div class="eyebrow">{eyebrow ?? (section ? d.nav[section.key] : d.short)}</div>
     <h1>{title}</h1>
     {section && (
-      <nav class="tabs">
-        {section.children!.map((c) => <a href={url(`/${lang}/${c.path}`)} class={c.path === cur ? 'on' : ''}>{d.nav[c.key]}</a>)}
+      <nav class="tabs" aria-label={d.sectionNav}>
+        {section.children!.map((c) => <a href={url(`/${lang}/${c.path}`)} class={c.path === cur ? 'on' : ''} aria-current={c.path === cur ? 'page' : undefined}>{d.nav[c.key]}</a>)}
       </nav>
     )}
   </div>
