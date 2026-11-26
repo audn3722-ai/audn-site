@@ -1,15 +1,12 @@
 ---
-import { t, url, otherLang, type Lang } from '../i18n';
+import { t, url, otherLang, menu, type Lang } from '../i18n';
 interface Props { lang: Lang; title?: string; path: string; description?: string }
 const { lang, title, path, description } = Astro.props;
 const d = t[lang];
 const pageTitle = title ? `${title} — ${d.short}` : `${d.name} — ${d.short}`;
-const items = [
-  ['', d.nav.home], ['about/', d.nav.about], ['programs/', d.nav.programs],
-  ['admission/', d.nav.admission], ['news/', d.nav.news], ['contacts/', d.nav.contacts],
-] as const;
 const current = path.replace(/^\//, '');
-const isActive = (p: string) => (p === '' ? current === '' : current.startsWith(p));
+const isActive = (m: (typeof menu)[number]) =>
+  [m.path, ...(m.children ?? []).map((c) => c.path)].some((p) => current.startsWith(p.split('/')[0] + '/'));
 const ol = otherLang(lang);
 ---
 <!doctype html>
@@ -36,8 +33,15 @@ const ol = otherLang(lang);
       <input type="checkbox" id="menu" class="menu-toggle" aria-label="Меню" />
       <label for="menu" class="burger" aria-hidden="true"><span></span></label>
       <nav class="nav">
-        {items.map(([p, label]) => (
-          <a href={url(`/${lang}/${p}`)} class={isActive(p) ? 'active' : ''}>{label}</a>
+        {menu.map((m) => m.children ? (
+          <div class={`dd ${isActive(m) ? 'active' : ''}`}>
+            <a class="top" href={url(`/${lang}/${m.path}`)}>{d.nav[m.key]}<i aria-hidden="true"></i></a>
+            <div class="sub">
+              {m.children.map((c) => <a href={url(`/${lang}/${c.path}`)} class={current === c.path ? 'cur' : ''}>{d.nav[c.key]}</a>)}
+            </div>
+          </div>
+        ) : (
+          <a class={`top ${isActive(m) ? 'active' : ''}`} href={url(`/${lang}/${m.path}`)}>{d.nav[m.key]}</a>
         ))}
         <a class="lang" href={url(`/${ol}/${current}`)} hreflang={ol === 'kg' ? 'ky' : 'ru'}>{ol === 'kg' ? 'KG' : 'RU'}</a>
       </nav>
@@ -51,7 +55,7 @@ const ol = otherLang(lang);
         <p><b>{d.name}</b><br />{d.address}</p>
       </div>
       <nav class="foot-nav">
-        {items.slice(1).map(([p, label]) => <a href={url(`/${lang}/${p}`)}>{label}</a>)}
+        {menu.map((m) => <a href={url(`/${lang}/${m.path}`)}>{d.nav[m.key]}</a>)}
       </nav>
     </div>
     <div class="wrap copy">© {new Date().getFullYear()} {d.short}. {d.rights}.</div>
@@ -85,8 +89,8 @@ const ol = otherLang(lang);
   .btn-ghost:hover { background: #fff; color: var(--navy); }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
   .grid { display: grid; gap: 22px; }
-  .g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-  .g3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .g2 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
   .page-head { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; padding: 64px 0 56px; }
   .page-head h1 { color: #fff; margin: 0; }
   .page-head .eyebrow { color: #ff8a8f; } .page-head .eyebrow::before { background: #ff8a8f; }
@@ -101,16 +105,24 @@ const ol = otherLang(lang);
   .brand small { font-size: 12.5px; color: var(--muted); }
   .nav { display: flex; align-items: center; gap: 4px; }
   .nav a { white-space: nowrap; padding: 8px 10px; border-radius: 8px; text-decoration: none; color: var(--ink); font-weight: 500; font-size: 15.5px; }
-  .nav a:hover, .nav a.active { color: var(--red); }
+  .nav a:hover, .nav a.active, .dd.active > .top { color: var(--red); }
+  .dd { position: relative; }
+  .dd .top i { display: inline-block; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); margin: 0 0 3px 7px; }
+  .sub { position: absolute; top: 100%; left: 0; min-width: 230px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 16px 34px rgba(11,31,75,.12); padding: 8px; display: none; }
+  .dd:hover .sub, .dd:focus-within .sub { display: block; }
+  .sub a { display: block; padding: 9px 12px; font-size: 15px; }
+  .sub a:hover, .sub a.cur { background: var(--bg); color: var(--red); }
   .nav a.lang { margin-left: 8px; border: 1.5px solid var(--navy); color: var(--navy); font: 700 13px/1 Montserrat, sans-serif; padding: 8px 11px; }
   .nav a.lang:hover { background: var(--navy); color: #fff; }
   .menu-toggle, .burger { display: none; }
-  @media (max-width: 1240px) { .brand small { display: none; } }
-  @media (max-width: 1080px) {
+  @media (max-width: 1440px) { .brand small { display: none; } }
+  @media (max-width: 1100px) {
     .burger { display: block; width: 40px; height: 40px; position: relative; cursor: pointer; }
     .burger span, .burger span::before, .burger span::after { position: absolute; left: 8px; width: 24px; height: 2px; background: var(--navy); content: ''; transition: .2s; }
     .burger span { top: 19px; } .burger span::before { top: -7px; left: 0; } .burger span::after { top: 7px; left: 0; }
-    .nav { position: absolute; top: 74px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 22px 18px; display: none; }
+    .nav { position: absolute; top: 74px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 22px 18px; display: none; max-height: calc(100vh - 74px); overflow-y: auto; }
+    .sub { position: static; display: block; border: 0; box-shadow: none; padding: 0 0 6px 14px; min-width: 0; }
+    .dd .top i { display: none; } .dd .top { font-weight: 600; }
     .menu-toggle:checked ~ .nav { display: flex; }
     .nav a.lang { margin: 8px 0 0; text-align: center; }
   }
