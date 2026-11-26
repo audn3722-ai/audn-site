@@ -84,6 +84,7 @@ content:
             - { value: schedule, label: "Студентам → Расписание" }
             - { value: practice, label: "Студентам → Практика" }
             - { value: materials, label: "Студентам → Полезные материалы" }
+            - { value: research, label: "Наука → Исследования и публикации" }
       - name: file
         label: Файл (PDF, Word, Excel)
         type: file
@@ -205,14 +206,17 @@ content:
     format: json
     fields:
       - name: hero_image
-        label: Большое фото на первом экране (1920×1080)
+        label: Большое фото первого экрана (1920×1080)
         type: image
-      - name: mission_ru
-        label: Миссия (рус.)
-        type: text
-      - name: mission_kg
-        label: Миссия (кырг.)
-        type: text
+      - name: hero_video
+        label: Фоновое видео первого экрана (MP4, необязательно)
+        type: file
+      - { name: subtitle_ru, label: Подзаголовок (рус.), type: text }
+      - { name: subtitle_kg, label: Подзаголовок (кырг.), type: text }
+      - { name: mission_title_ru, label: Заголовок миссии (рус.), type: string }
+      - { name: mission_title_kg, label: Заголовок миссии (кырг.), type: string }
+      - { name: mission_ru, label: Текст миссии (рус.), type: text }
+      - { name: mission_kg, label: Текст миссии (кырг.), type: text }
       - name: stats
         label: Цифры (3 штуки)
         type: object
@@ -221,8 +225,31 @@ content:
           - { name: value, label: Цифра, type: string }
           - { name: label_ru, label: Подпись (рус.), type: string }
           - { name: label_kg, label: Подпись (кырг.), type: string }
-      - name: features
-        label: Блоки «фото + текст»
+      - { name: academics_text_ru, label: "Программы: вводный текст (рус.)", type: text }
+      - { name: academics_text_kg, label: "Программы: вводный текст (кырг.)", type: text }
+      - name: levels
+        label: Вкладки программ
+        type: object
+        list: true
+        fields:
+          - { name: tab_ru, label: Название вкладки (рус.), type: string }
+          - { name: tab_kg, label: Название вкладки (кырг.), type: string }
+          - { name: image, label: Фото (1200×900), type: image }
+          - { name: title_ru, label: Заголовок (рус.), type: string }
+          - { name: title_kg, label: Заголовок (кырг.), type: string }
+          - { name: text_ru, label: Описание (рус.), type: text }
+          - { name: text_kg, label: Описание (кырг.), type: text }
+          - { name: points_ru, label: "Ключевые дисциплины через ; (рус.)", type: string }
+          - { name: points_kg, label: "Ключевые дисциплины через ; (кырг.)", type: string }
+          - { name: link, label: "Ссылка (например /programs/law/)", type: string }
+      - name: newsletter_action
+        label: "Подписка: адрес формы (Google Forms …/formResponse). Пусто — кнопка «Открыть новости»"
+        type: string
+      - name: newsletter_field
+        label: "Подписка: имя поля email (например entry.123456)"
+        type: string
+      - name: showcases
+        label: Витрины «фото + текст»
         type: object
         list: true
         fields:
@@ -231,19 +258,17 @@ content:
           - { name: title_kg, label: Заголовок (кырг.), type: string }
           - { name: text_ru, label: Текст (рус.), type: text }
           - { name: text_kg, label: Текст (кырг.), type: text }
-          - { name: button_ru, label: Текст кнопки (рус.), type: string }
-          - { name: button_kg, label: Текст кнопки (кырг.), type: string }
-          - { name: link, label: "Ссылка (например /programs/law/)", type: string }
-      - name: tiles_image
-        label: Фото в блоке «Найдите свою программу» (1200×900)
-        type: image
-      - name: testimonial
-        label: Отзыв
+          - { name: button_ru, label: Текст ссылки (рус.), type: string }
+          - { name: button_kg, label: Текст ссылки (кырг.), type: string }
+          - { name: link, label: "Ссылка (например /students/)", type: string }
+      - name: alumni
+        label: История выпускника
         type: object
         fields:
           - { name: quote_ru, label: Цитата (рус.), type: text }
           - { name: quote_kg, label: Цитата (кырг.), type: text }
           - { name: name, label: Имя и фамилия, type: string }
-          - { name: role_ru, label: Кто это (рус.), type: string }
-          - { name: role_kg, label: Кто это (кырг.), type: string }
-          - { name: photo, label: Фото (квадратное), type: image }
+          - { name: program_ru, label: Программа (рус.), type: string }
+          - { name: program_kg, label: Программа (кырг.), type: string }
+          - { name: year, label: Год выпуска, type: string }
+          - { name: photo, label: Фото (800×1000), type: image }
