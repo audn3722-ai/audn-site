@@ -1,0 +1,45 @@
+# Настройки админки Pages CMS (app.pagescms.org)
+media:
+  input: public/uploads
+  output: /uploads
+content:
+  - name: news
+    label: Новости
+    type: collection
+    path: src/content/news
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, date, lang]
+      primary: title
+      sort: [date]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Заголовок
+        type: string
+        required: true
+      - name: date
+        label: Дата
+        type: date
+        required: true
+      - name: lang
+        label: Язык (ru — русский, kg — кыргызский)
+        type: select
+        default: ru
+        options:
+          values: [ru, kg]
+      - name: summary
+        label: Краткое описание (1–2 предложения)
+        type: text
+      - name: image
+        label: Главное фото
+        type: image
+      - name: draft
+        label: Черновик (не показывать на сайте)
+        type: boolean
+        default: false
+      - name: body
+        label: Текст новости
+        type: rich-text
