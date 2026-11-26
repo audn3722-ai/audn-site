@@ -1,123 +1,276 @@
 ---
 import Base from '../../layouts/Base.astro';
+import ImageSlot from '../../components/ImageSlot.astro';
 import { getCollection } from 'astro:content';
-import { t, url, programs, fmtDate, langs, type Lang } from '../../i18n';
+import { t, url, fileUrl, programs, fmtDate, langs, type Lang } from '../../i18n';
+import home from '../../data/home.json';
 export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
 const lang = Astro.params.lang as Lang;
 const d = t[lang];
+const k = (o: any, f: string) => (lang === 'kg' && o[`${f}_kg`]) || o[`${f}_ru`] || '';
+
 const news = (await getCollection('news', (n) => n.data.lang === lang && !n.data.draft))
-  .sort((a, b) => +b.data.date - +a.data.date).slice(0, 3);
+  .sort((a, b) => +b.data.date - +a.data.date).slice(0, 8);
+const teachers = (await getCollection('teachers')).sort((a, b) => a.data.order - b.data.order).slice(0, 10);
+
 const L = {
-  ru: { why: 'Почему АУДН', whyT: 'Университет, где учат практике', dirs: 'Направления подготовки', latest: 'Новости университета',
-    feats: [['Практика с первого курса', 'Казусы, учебные процессы, интерактивные игры и стажировки в профильных организациях.'],
-            ['Опытные преподаватели', 'Практикующие юристы и педагоги, которые знают, чего ждёт работодатель.'],
-            ['Обучение на двух языках', 'Занятия и материалы на русском и кыргызском языках.']],
-    ctaT: 'Приёмная кампания', ctaP: 'Узнайте о порядке поступления, документах и сроках подачи.' },
-  kg: { why: 'Эмне үчүн АУДН', whyT: 'Практикага үйрөткөн университет', dirs: 'Даярдоо багыттары', latest: 'Университеттин жаңылыктары',
-    feats: [['Биринчи курстан практика', 'Казустар, окуу процесстери, интерактивдүү оюндар жана профилдик уюмдарда стажировка.'],
-            ['Тажрыйбалуу окутуучулар', 'Иш берүүчүнүн талабын билген практик юристтер жана педагогдор.'],
-            ['Эки тилде окутуу', 'Сабактар жана материалдар орус жана кыргыз тилдеринде.']],
-    ctaT: 'Кабыл алуу', ctaP: 'Тапшыруу тартиби, документтер жана мөөнөттөр жөнүндө билиңиз.' },
+  ru: { descr: 'Юриспруденция и педагогика в городе Манас', mission: 'Наша миссия', more: 'Подробнее об университете',
+    tilesT: 'Найдите свою программу', tilesP: 'Выберите направление подготовки или раздел, который вас интересует.',
+    newsT: 'Последние новости', newsAll: 'Все новости', newsEmpty: 'Здесь появятся новости университета',
+    facT: 'Наши преподаватели', facAll: 'Все преподаватели', facEmpty: 'Здесь появятся преподаватели',
+    prev: 'Назад', next: 'Вперёд', ctaT: 'Начните свой путь в АУДН', ctaP: 'Узнайте о порядке поступления или задайте вопрос приёмной комиссии.',
+    tiles: [['programs/law/', 'Юриспруденция · 530500'], ['programs/pedagogy/', 'Педагогика · 550700'], ['admission/', 'Как поступить'], ['admission/faq/', 'Вопросы и ответы'], ['education/calendar/', 'Академический календарь'], ['about/documents/', 'Документы']] },
+  kg: { descr: 'Манас шаарында юриспруденция жана педагогика', mission: 'Биздин миссия', more: 'Университет жөнүндө кененирээк',
+    tilesT: 'Өз программаңызды табыңыз', tilesP: 'Даярдоо багытын же сизди кызыктырган бөлүмдү тандаңыз.',
+    newsT: 'Акыркы жаңылыктар', newsAll: 'Бардык жаңылыктар', newsEmpty: 'Бул жерде университеттин жаңылыктары чыгат',
+    facT: 'Биздин окутуучулар', facAll: 'Бардык окутуучулар', facEmpty: 'Бул жерде окутуучулар чыгат',
+    prev: 'Артка', next: 'Алдыга', ctaT: 'АУДНда жолуңузду баштаңыз', ctaP: 'Тапшыруу тартиби жөнүндө билиңиз же кабыл алуу комиссиясына суроо бериңиз.',
+    tiles: [['programs/law/', 'Юриспруденция · 530500'], ['programs/pedagogy/', 'Педагогика · 550700'], ['admission/', 'Кантип тапшыруу керек'], ['admission/faq/', 'Суроо-жооптор'], ['education/calendar/', 'Академиялык календарь'], ['about/documents/', 'Документтер']] },
 }[lang];
+const tm = home.testimonial as any;
 ---
 <Base lang={lang} path="/">
-  <section class="hero">
-    <div class="wrap hero-grid">
+  <!-- 1. Герой -->
+  <section class="hero" aria-labelledby="hero-t">
+    <div class="hero-bg">
+      {home.hero_image
+        ? <img src={fileUrl(home.hero_image)} alt="" />
+        : <ImageSlot lang={lang} ratio="auto" size="1920 × 1080" dark corner class="hero-slot" />}
+    </div>
+    <div class="wrap hero-in">
+      <p class="kicker">{d.city}</p>
+      <h1 id="hero-t">{d.name}</h1>
+      <p class="descr">{L.descr}</p>
+      <div class="actions">
+        <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.applyNow}</a>
+        <a class="btn btn-ghost" href={url(`/${lang}/contacts/`)}>{d.requestInfo}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Миссия -->
+  <section class="mission" aria-labelledby="mis-t">
+    <div class="wrap narrow">
+      <h2 id="mis-t" class="eyebrow center">{L.mission}</h2>
+      <p class="mis-text">{k(home, 'mission')}</p>
+      <a class="tlink" href={url(`/${lang}/about/`)}>{L.more} →</a>
+    </div>
+  </section>
+
+  <!-- 3. Цифры -->
+  <section class="stats" aria-label={lang === 'kg' ? 'Сандар' : 'Цифры'}>
+    <div class="wrap stats-row">
+      {home.stats.map((s: any) => <div class="stat"><b>{s.value}</b><span>{k(s, 'label')}</span></div>)}
+    </div>
+  </section>
+
+  <!-- 4. Чередующиеся блоки -->
+  <section class="features">
+    <div class="wrap">
+      {home.features.map((f: any, i: number) => (
+        <article class={`feat ${i % 2 ? 'rev' : ''}`}>
+          <div class="feat-img"><ImageSlot src={f.image} lang={lang} ratio="4 / 3" /></div>
+          <div class="feat-txt">
+            <h2>{k(f, 'title')}</h2>
+            <p>{k(f, 'text')}</p>
+            <a class="btn btn-outline" href={url(`/${lang}${f.link}`)}>{k(f, 'button')}</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- 5. Плитки программ -->
+  <section class="tiles" aria-labelledby="tiles-t">
+    <div class="wrap tiles-in">
+      <div class="tiles-img"><ImageSlot src={home.tiles_image} lang={lang} ratio="4 / 3" dark /></div>
       <div>
-        <div class="eyebrow">{d.city}</div>
-        <h1>{d.name}</h1>
-        <p class="lead">{d.tagline}</p>
-        <div class="actions">
-          <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.apply}</a>
-          <a class="btn btn-ghost" href={url(`/${lang}/programs/`)}>{d.nav.programs}</a>
+        <h2 id="tiles-t">{L.tilesT}</h2>
+        <p>{L.tilesP}</p>
+        <ul class="pills">
+          {L.tiles.map(([p, label]) => <li><a href={url(`/${lang}/${p}`)}>{label}</a></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Новости (карусель) -->
+  <section class="carousel-sec" aria-labelledby="news-t">
+    <div class="wrap">
+      <div class="c-head">
+        <h2 id="news-t">{L.newsT}</h2>
+        <div class="c-ctrl">
+          <button type="button" class="arrow" data-dir="-1" data-target="news-track" aria-label={L.prev}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+          <button type="button" class="arrow" data-dir="1" data-target="news-track" aria-label={L.next}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+          <a class="tlink" href={url(`/${lang}/news/`)}>{L.newsAll} →</a>
         </div>
       </div>
-      <div class="hero-art" aria-hidden="true"><img src={url('/img/emblem-white.png')} alt="" width="461" height="381" /></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2 class="eyebrow">{L.dirs}</h2>
-      <div class="grid g2">
-        {programs.map((p) => (
-          <a class="card prog" href={url(`/${lang}/programs/${p.slug}/`)}>
-            <span class="tag">{p.code}</span>
-            <h3>{p[lang].title}</h3>
-            <p>{p[lang].short}</p>
-            <span class="more">{d.more} →</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="alt">
-    <div class="wrap">
-      <div class="eyebrow">{L.why}</div>
-      <h2>{L.whyT}</h2>
-      <div class="grid g3 feats">
-        {L.feats.map(([h, p], i) => (
-          <div class="feat"><span class="num">0{i + 1}</span><h3>{h}</h3><p>{p}</p></div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <div class="row-head">
-        <div><div class="eyebrow">{d.nav.news}</div><h2>{L.latest}</h2></div>
-        <a href={url(`/${lang}/news/`)}>{d.allNews} →</a>
-      </div>
-      {news.length === 0 ? <p class="muted">{d.noNews}</p> : (
-        <div class="grid g3">
-          {news.map((n) => (
-            <a class="card news" href={url(`/${lang}/news/${n.id}/`)}>
-              {n.data.image && <img src={n.data.image.startsWith('/') ? url(n.data.image) : n.data.image} alt="" loading="lazy" width="640" height="400" />}
+      <ul class="track" id="news-track">
+        {news.length ? news.map((n) => (
+          <li class="c-card">
+            <a href={url(`/${lang}/news/${n.id}/`)}>
+              <ImageSlot src={n.data.image} lang={lang} ratio="4 / 3" size="800 × 600" />
               <time>{fmtDate(n.data.date, lang)}</time>
               <h3>{n.data.title}</h3>
             </a>
-          ))}
-        </div>
-      )}
+          </li>
+        )) : [1, 2, 3, 4].map(() => (
+          <li class="c-card ghost"><ImageSlot lang={lang} ratio="4 / 3" size="800 × 600" /><p>{L.newsEmpty}</p></li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  <section class="cta">
-    <div class="wrap cta-in">
-      <div><h2>{L.ctaT}</h2><p>{L.ctaP}</p></div>
-      <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.nav.admission}</a>
+  <!-- 7. Преподаватели (карусель) -->
+  <section class="carousel-sec alt" aria-labelledby="fac-t">
+    <div class="wrap">
+      <div class="c-head">
+        <h2 id="fac-t">{L.facT}</h2>
+        <div class="c-ctrl">
+          <button type="button" class="arrow" data-dir="-1" data-target="fac-track" aria-label={L.prev}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+          <button type="button" class="arrow" data-dir="1" data-target="fac-track" aria-label={L.next}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+          <a class="tlink" href={url(`/${lang}/education/teachers/`)}>{L.facAll} →</a>
+        </div>
+      </div>
+      <ul class="track" id="fac-track">
+        {teachers.length ? teachers.map((p) => (
+          <li class="c-card fac">
+            <ImageSlot src={p.data.photo} lang={lang} ratio="1 / 1" size="600 × 600" alt={p.data.name} />
+            <h3>{p.data.name}</h3>
+            <p>{(lang === 'kg' && p.data.role_kg) || p.data.role_ru}</p>
+          </li>
+        )) : [1, 2, 3, 4].map(() => (
+          <li class="c-card ghost"><ImageSlot lang={lang} ratio="1 / 1" size="600 × 600" /><p>{L.facEmpty}</p></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8. Отзыв -->
+  <section class="quote" aria-label={lang === 'kg' ? 'Пикир' : 'Отзыв'}>
+    <figure class="wrap narrow">
+      <svg class="qmark" viewBox="0 0 48 36" width="48" height="36" aria-hidden="true"><path d="M0 36V20C0 8 7 1 18 0v7c-6 1-9 5-9 11h9v18H0zm30 0V20C30 8 37 1 48 0v7c-6 1-9 5-9 11h9v18H30z" fill="currentColor"/></svg>
+      <blockquote>{k(tm, 'quote')}</blockquote>
+      <figcaption>
+        <div class="qphoto"><ImageSlot src={tm.photo} lang={lang} ratio="1 / 1" round alt={tm.name} /></div>
+        <div><b>{tm.name}</b><span>{k(tm, 'role')}</span></div>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- 9. Финальный призыв -->
+  <section class="final" aria-labelledby="cta-t">
+    <div class="wrap narrow center">
+      <h2 id="cta-t">{L.ctaT}</h2>
+      <p>{L.ctaP}</p>
+      <div class="actions center">
+        <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.applyNow}</a>
+        <a class="btn btn-outline" href={url(`/${lang}/contacts/`)}>{d.nav.contacts}</a>
+      </div>
     </div>
   </section>
 </Base>
 
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.arrow').forEach((b) => b.addEventListener('click', () => {
+    const tr = document.getElementById(b.dataset.target!);
+    if (!tr) return;
+    const card = tr.querySelector<HTMLElement>('li');
+    const step = card ? card.offsetWidth + 24 : 320;
+    tr.scrollBy({ left: Number(b.dataset.dir) * step, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }));
+</script>
+
 <style>
-  .hero { background: radial-gradient(circle at 80% 30%, #1d3f86 0, var(--navy) 60%); color: #fff; padding: 96px 0 100px; overflow: hidden; }
-  .hero h1 { color: #fff; max-width: 640px; }
-  .hero .lead { color: #c9d4ee; }
-  .hero .eyebrow { color: #ff8a8f; } .hero .eyebrow::before { background: #ff8a8f; }
-  .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
-  .hero-art img { opacity: .9; width: 100%; max-width: 420px; display: block; margin-left: auto; }
-  .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
-  @media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; } .hero-art { display: none; } .hero { padding: 64px 0; } }
-  .prog { text-decoration: none; color: inherit; transition: .2s; border-top: 4px solid var(--navy); }
-  .prog:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(11,31,75,.1); border-top-color: var(--red); }
-  .prog h3 { margin-top: 14px; font-size: 24px; } .prog p { color: var(--muted); }
-  .more { font-weight: 600; color: var(--red); }
-  .alt { background: #fff; border-block: 1px solid var(--line); }
-  .feats { margin-top: 26px; }
-  .feat .num { font: 800 36px Montserrat, sans-serif; color: var(--red); opacity: .85; }
-  .feat p { color: var(--muted); margin: 0; }
-  .row-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
-  .row-head a { font-weight: 600; }
-  .muted { color: var(--muted); }
-  .news { text-decoration: none; color: inherit; padding: 0; overflow: hidden; }
-  .news img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
-  .news time, .news h3 { display: block; padding: 0 22px; }
-  .news time { padding-top: 18px; color: var(--muted); font-size: 14px; } .news h3 { padding-bottom: 22px; margin: 6px 0 0; }
-  .cta { background: var(--red); color: #fff; padding: 56px 0; }
-  .cta h2 { color: #fff; margin-bottom: .3em; } .cta p { margin: 0; opacity: .9; }
-  .cta-in { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .cta .btn-red { background: #fff; color: var(--red); } .cta .btn-red:hover { background: var(--navy); color: #fff; }
+  section { padding: 88px 0; }
+  .narrow { max-width: 860px; }
+  .center { text-align: center; justify-content: center; }
+  .tlink { font: 600 15px Montserrat, sans-serif; color: var(--red); text-decoration: none; }
+  .tlink:hover { text-decoration: underline; }
+
+  /* hero */
+  .hero { position: relative; min-height: min(78vh, 760px); display: flex; align-items: flex-end; padding: 0; color: #fff; overflow: hidden; background: var(--navy); }
+  .hero-bg { position: absolute; inset: 0; }
+  .hero-bg img, .hero-bg :global(.hero-slot) { width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,20,50,.92) 0%, rgba(8,20,50,.55) 45%, rgba(8,20,50,.15) 100%); }
+  .hero-in { position: relative; z-index: 1; padding-block: 120px 80px; width: 100%; }
+  .kicker { font: 700 13px Montserrat, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #ff8a8f; margin: 0 0 16px; }
+  .hero h1 { color: #fff; font-size: clamp(36px, 6vw, 72px); max-width: 900px; margin: 0 0 16px; letter-spacing: -.01em; }
+  .descr { font-size: clamp(18px, 2vw, 22px); color: #dbe3f4; margin: 0; }
+  .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+  .hero .btn-ghost { border-color: #fff; }
+
+  /* mission */
+  .mission { text-align: center; background: #fff; }
+  .eyebrow.center { justify-content: center; }
+  .eyebrow.center::after { content: ''; width: 28px; height: 2px; background: var(--red); }
+  .mis-text { font: 600 clamp(22px, 2.6vw, 30px)/1.45 Montserrat, sans-serif; color: var(--navy); margin: 10px 0 26px; }
+
+  /* stats */
+  .stats { background: var(--navy); padding: 64px 0; }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .stat { text-align: center; padding: 8px 16px; border-left: 1px solid rgba(255,255,255,.18); }
+  .stat:first-child { border-left: 0; }
+  .stat b { display: block; font: 800 clamp(44px, 6vw, 72px)/1 Montserrat, sans-serif; color: #fff; }
+  .stat b::after { content: ''; display: block; width: 36px; height: 3px; background: var(--red); margin: 16px auto 14px; }
+  .stat span { color: #c9d4ee; font-size: 16px; }
+  @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr; } .stat { border-left: 0; border-top: 1px solid rgba(255,255,255,.18); padding-top: 24px; } .stat:first-child { border-top: 0; } }
+
+  /* features */
+  .features { background: #fff; padding-top: 24px; }
+  .feat { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; padding: 56px 0; border-bottom: 1px solid var(--line); }
+  .feat:last-child { border-bottom: 0; }
+  .feat.rev .feat-img { order: 2; }
+  .feat-txt h2 { font-size: clamp(28px, 3vw, 40px); position: relative; padding-top: 22px; }
+  .feat-txt h2::before { content: ''; position: absolute; top: 0; left: 0; width: 48px; height: 4px; background: var(--red); }
+  .feat-txt p { color: var(--muted); font-size: 18px; margin: 0 0 26px; }
+  @media (max-width: 820px) { .feat { grid-template-columns: 1fr; gap: 24px; padding: 36px 0; } .feat.rev .feat-img { order: 0; } }
+
+  /* tiles */
+  .tiles { background: var(--navy); color: #c9d4ee; }
+  .tiles-in { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .tiles h2 { color: #fff; font-size: clamp(28px, 3vw, 40px); }
+  .pills { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pills a { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 14px 18px; border: 1.5px solid rgba(255,255,255,.35); color: #fff; text-decoration: none; font-weight: 600; transition: background .2s, color .2s, border-color .2s; }
+  .pills a::after { content: '→'; color: #ff8a8f; }
+  .pills a:hover { background: #fff; color: var(--navy); border-color: #fff; }
+  .tiles :focus-visible { outline-color: #fff; }
+  @media (max-width: 820px) { .tiles-in { grid-template-columns: 1fr; gap: 32px; } }
+  @media (max-width: 480px) { .pills { grid-template-columns: 1fr; } }
+
+  /* carousels */
+  .carousel-sec.alt { background: #fff; }
+  .c-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+  .c-head h2 { margin: 0; font-size: clamp(28px, 3vw, 40px); }
+  .c-ctrl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .arrow { width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--navy); background: #fff; color: var(--navy); display: grid; place-items: center; cursor: pointer; transition: background .2s, color .2s; }
+  .arrow:hover { background: var(--navy); color: #fff; }
+  .c-ctrl .tlink { margin-left: 10px; }
+  .track { list-style: none; margin: 0; padding: 0 0 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, calc((100% - 72px) / 4)); gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  @media (max-width: 1000px) { .track { grid-auto-columns: minmax(260px, calc((100% - 24px) / 2)); } }
+  @media (max-width: 560px) { .track { grid-auto-columns: 82%; } }
+  .c-card { scroll-snap-align: start; }
+  .c-card a { text-decoration: none; color: inherit; display: block; }
+  .c-card time { display: block; color: var(--muted); font-size: 14px; margin-top: 14px; }
+  .c-card h3 { font-size: 18px; margin: 6px 0 0; }
+  .c-card a:hover h3 { color: var(--red); }
+  .c-card.fac h3 { margin-top: 14px; } .c-card.fac p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+  .c-card.ghost p { color: var(--muted); font-size: 15px; margin: 12px 0 0; }
+
+  /* quote */
+  .quote { background: var(--bg); text-align: center; }
+  .quote figure { margin: 0 auto; }
+  .qmark { color: var(--red); }
+  blockquote { font: 600 clamp(22px, 2.4vw, 28px)/1.5 Montserrat, sans-serif; color: var(--navy); margin: 22px 0 30px; }
+  figcaption { display: inline-flex; align-items: center; gap: 16px; text-align: left; }
+  .qphoto { width: 72px; flex: none; }
+  .qphoto :global(img) { border-radius: 50%; }
+  figcaption b { display: block; font: 700 17px Montserrat, sans-serif; color: var(--navy); }
+  figcaption span { color: var(--muted); font-size: 15px; }
+
+  /* final */
+  .final { background: #fff; border-top: 6px solid var(--red); }
+  .final h2 { font-size: clamp(30px, 3.6vw, 46px); }
+  .final p { font-size: 19px; color: var(--muted); }
+  .actions.center { justify-content: center; }
 </style>
