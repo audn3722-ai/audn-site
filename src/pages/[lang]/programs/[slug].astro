@@ -1,0 +1,33 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { t, url, programs, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () =>
+  langs.flatMap((lang) => programs.map((p) => ({ params: { lang, slug: p.slug } })));
+const lang = Astro.params.lang as Lang;
+const p = programs.find((x) => x.slug === Astro.params.slug)!;
+const d = t[lang];
+const c = p[lang];
+const careersT = lang === 'ru' ? 'Где работают выпускники' : 'Бүтүрүүчүлөр кайда иштешет';
+---
+<Base lang={lang} title={c.title} path={`/programs/${p.slug}/`} description={c.short}>
+  <div class="page-head"><div class="wrap"><div class="eyebrow">{p.code}</div><h1>{c.title}</h1></div></div>
+  <section>
+    <div class="wrap layout">
+      <div class="prose">
+        <p class="lead">{c.short}</p>
+        {c.text.map((x) => <p>{x}</p>)}
+        <a class="btn btn-red" href={url(`/${lang}/admission/`)}>{d.apply}</a>
+      </div>
+      <aside class="card">
+        <h3>{careersT}</h3>
+        <ul>{c.careers.map((x) => <li>{x}</li>)}</ul>
+      </aside>
+    </div>
+  </section>
+</Base>
+<style>
+  .layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 44px; align-items: start; }
+  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+  ul { padding-left: 18px; margin: 0; } li { margin: 6px 0; } li::marker { color: var(--red); }
+  .btn { margin-top: 10px; }
+</style>
