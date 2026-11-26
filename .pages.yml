@@ -197,3 +197,53 @@ content:
       - name: body
         label: Ответ
         type: rich-text
+
+  - name: home
+    label: Главная страница
+    type: file
+    path: src/data/home.json
+    format: json
+    fields:
+      - name: hero_image
+        label: Большое фото на первом экране (1920×1080)
+        type: image
+      - name: mission_ru
+        label: Миссия (рус.)
+        type: text
+      - name: mission_kg
+        label: Миссия (кырг.)
+        type: text
+      - name: stats
+        label: Цифры (3 штуки)
+        type: object
+        list: { min: 3, max: 3 }
+        fields:
+          - { name: value, label: Цифра, type: string }
+          - { name: label_ru, label: Подпись (рус.), type: string }
+          - { name: label_kg, label: Подпись (кырг.), type: string }
+      - name: features
+        label: Блоки «фото + текст»
+        type: object
+        list: true
+        fields:
+          - { name: image, label: Фото (1200×900), type: image }
+          - { name: title_ru, label: Заголовок (рус.), type: string }
+          - { name: title_kg, label: Заголовок (кырг.), type: string }
+          - { name: text_ru, label: Текст (рус.), type: text }
+          - { name: text_kg, label: Текст (кырг.), type: text }
+          - { name: button_ru, label: Текст кнопки (рус.), type: string }
+          - { name: button_kg, label: Текст кнопки (кырг.), type: string }
+          - { name: link, label: "Ссылка (например /programs/law/)", type: string }
+      - name: tiles_image
+        label: Фото в блоке «Найдите свою программу» (1200×900)
+        type: image
+      - name: testimonial
+        label: Отзыв
+        type: object
+        fields:
+          - { name: quote_ru, label: Цитата (рус.), type: text }
+          - { name: quote_kg, label: Цитата (кырг.), type: text }
+          - { name: name, label: Имя и фамилия, type: string }
+          - { name: role_ru, label: Кто это (рус.), type: string }
+          - { name: role_kg, label: Кто это (кырг.), type: string }
+          - { name: photo, label: Фото (квадратное), type: image }
