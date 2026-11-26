@@ -23,11 +23,32 @@ export const t = {
     nav: {
       home: 'Главная',
       about: 'Об университете',
+      aboutUs: 'О нас',
+      leadership: 'Руководство',
+      documents: 'Документы',
+      education: 'Образование',
       programs: 'Направления',
+      teachers: 'Преподаватели',
+      calendar: 'Академический календарь',
       admission: 'Абитуриентам',
+      howTo: 'Как поступить',
+      faq: 'Вопросы и ответы',
+      students: 'Студентам',
+      schedule: 'Расписание',
+      practice: 'Практика',
+      materials: 'Полезные материалы',
       news: 'Новости',
       contacts: 'Контакты',
     },
+    announcement: 'Объявление',
+    newsKind: 'Новость',
+    all: 'Все',
+    announcements: 'Объявления',
+    noDocs: 'Документы скоро появятся.',
+    noTeachers: 'Информация о преподавателях скоро появится.',
+    download: 'Открыть',
+    plan: 'Учебный план',
+    common: 'Общие дисциплины',
     more: 'Подробнее',
     allNews: 'Все новости',
     noNews: 'Новости скоро появятся.',
@@ -51,11 +72,32 @@ export const t = {
     nav: {
       home: 'Башкы бет',
       about: 'Университет жөнүндө',
+      aboutUs: 'Биз жөнүндө',
+      leadership: 'Жетекчилик',
+      documents: 'Документтер',
+      education: 'Билим берүү',
       programs: 'Багыттар',
+      teachers: 'Окутуучулар',
+      calendar: 'Академиялык календарь',
       admission: 'Абитуриенттерге',
+      howTo: 'Кантип тапшыруу керек',
+      faq: 'Суроо-жооптор',
+      students: 'Студенттерге',
+      schedule: 'Сабактардын жадыбалы',
+      practice: 'Практика',
+      materials: 'Пайдалуу материалдар',
       news: 'Жаңылыктар',
       contacts: 'Байланыш',
     },
+    announcement: 'Кулактандыруу',
+    newsKind: 'Жаңылык',
+    all: 'Баары',
+    announcements: 'Кулактандыруулар',
+    noDocs: 'Документтер жакында жайгаштырылат.',
+    noTeachers: 'Окутуучулар тууралуу маалымат жакында чыгат.',
+    download: 'Ачуу',
+    plan: 'Окуу планы',
+    common: 'Жалпы дисциплиналар',
     more: 'Кененирээк',
     allNews: 'Бардык жаңылыктар',
     noNews: 'Жаңылыктар жакында чыгат.',
@@ -120,3 +162,20 @@ export const programs = [
 export const otherLang = (l: Lang): Lang => (l === 'ru' ? 'kg' : 'ru');
 export const fmtDate = (d: Date, l: Lang) =>
   d.toLocaleDateString(l === 'ru' ? 'ru-RU' : 'ky-KG', { day: 'numeric', month: 'long', year: 'numeric' });
+
+type NavKey = keyof (typeof t)['ru']['nav'];
+// Меню сайта: пункт → подпункты (путь без языка)
+export const menu: { key: NavKey; path: string; children?: { key: NavKey; path: string }[] }[] = [
+  { key: 'about', path: 'about/', children: [
+    { key: 'aboutUs', path: 'about/' }, { key: 'leadership', path: 'about/leadership/' }, { key: 'documents', path: 'about/documents/' } ] },
+  { key: 'education', path: 'programs/', children: [
+    { key: 'programs', path: 'programs/' }, { key: 'teachers', path: 'education/teachers/' }, { key: 'calendar', path: 'education/calendar/' } ] },
+  { key: 'admission', path: 'admission/', children: [
+    { key: 'howTo', path: 'admission/' }, { key: 'faq', path: 'admission/faq/' } ] },
+  { key: 'students', path: 'students/', children: [
+    { key: 'schedule', path: 'students/schedule/' }, { key: 'practice', path: 'students/practice/' }, { key: 'materials', path: 'students/materials/' } ] },
+  { key: 'news', path: 'news/' },
+  { key: 'contacts', path: 'contacts/' },
+];
+
+export const fileUrl = (f?: string | null) => (!f ? '' : f.startsWith('/') ? url(f) : f);
