@@ -1,0 +1,19 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import PersonCard from '../../../components/PersonCard.astro';
+import { getCollection } from 'astro:content';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const people = (await getCollection('leadership')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base lang={lang} title={d.nav.leadership} path="/about/leadership/">
+  <PageHead lang={lang} title={d.nav.leadership} path="/about/leadership/" />
+  <section>
+    <div class="wrap grid g2">
+      {people.map((p) => <PersonCard name={p.data.name} role={(lang === 'kg' && p.data.role_kg) || p.data.role_ru} photo={p.data.photo} />)}
+    </div>
+  </section>
+</Base>

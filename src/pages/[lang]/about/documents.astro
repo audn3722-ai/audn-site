@@ -1,0 +1,23 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import DocList from '../../../components/DocList.astro';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const groups = lang === 'ru'
+  ? [['charter', 'Устав и регистрация'], ['license', 'Лицензия и аккредитация'], ['regulations', 'Положения и правила']]
+  : [['charter', 'Устав жана каттоо'], ['license', 'Лицензия жана аккредитация'], ['regulations', 'Жоболор жана эрежелер']];
+---
+<Base lang={lang} title={d.nav.documents} path="/about/documents/">
+  <PageHead lang={lang} title={d.nav.documents} path="/about/documents/" />
+  <section>
+    <div class="wrap">
+      {groups.map(([cat, title]) => (
+        <div class="grp"><h2>{title}</h2><DocList lang={lang} categories={[cat]} /></div>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>.grp + .grp { margin-top: 44px; } h2 { font-size: 24px; }</style>
