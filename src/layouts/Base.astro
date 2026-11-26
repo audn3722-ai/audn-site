@@ -1,0 +1,126 @@
+---
+import { t, url, otherLang, type Lang } from '../i18n';
+interface Props { lang: Lang; title?: string; path: string; description?: string }
+const { lang, title, path, description } = Astro.props;
+const d = t[lang];
+const pageTitle = title ? `${title} — ${d.short}` : `${d.name} — ${d.short}`;
+const items = [
+  ['', d.nav.home], ['about/', d.nav.about], ['programs/', d.nav.programs],
+  ['admission/', d.nav.admission], ['news/', d.nav.news], ['contacts/', d.nav.contacts],
+] as const;
+const current = path.replace(/^\//, '');
+const isActive = (p: string) => (p === '' ? current === '' : current.startsWith(p));
+const ol = otherLang(lang);
+---
+<!doctype html>
+<html lang={lang === 'kg' ? 'ky' : 'ru'}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description ?? d.fullName} />
+  <link rel="icon" type="image/png" href={url('/favicon.png')} />
+  <link rel="alternate" hreflang="ru" href={url(`/ru/${current}`)} />
+  <link rel="alternate" hreflang="ky" href={url(`/kg/${current}`)} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href={url(`/${lang}/`)}>
+        <img src={url('/img/emblem.png')} alt="" width="52" height="43" />
+        <span><b>{d.short}</b><small>{d.name}</small></span>
+      </a>
+      <input type="checkbox" id="menu" class="menu-toggle" aria-label="Меню" />
+      <label for="menu" class="burger" aria-hidden="true"><span></span></label>
+      <nav class="nav">
+        {items.map(([p, label]) => (
+          <a href={url(`/${lang}/${p}`)} class={isActive(p) ? 'active' : ''}>{label}</a>
+        ))}
+        <a class="lang" href={url(`/${ol}/${current}`)} hreflang={ol === 'kg' ? 'ky' : 'ru'}>{ol === 'kg' ? 'KG' : 'RU'}</a>
+      </nav>
+    </div>
+  </header>
+  <main><slot /></main>
+  <footer class="site-footer">
+    <div class="wrap foot">
+      <div class="foot-brand">
+        <img src={url('/img/emblem-white.png')} alt="" width="64" height="53" />
+        <p><b>{d.name}</b><br />{d.address}</p>
+      </div>
+      <nav class="foot-nav">
+        {items.slice(1).map(([p, label]) => <a href={url(`/${lang}/${p}`)}>{label}</a>)}
+      </nav>
+    </div>
+    <div class="wrap copy">© {new Date().getFullYear()} {d.short}. {d.rights}.</div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --navy: #0b1f4b; --navy-2: #13306b; --red: #b3121a; --ink: #1a2233; --muted: #5b6478;
+    --bg: #f6f7fb; --card: #fff; --line: #e3e7f0; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 400 17px/1.65 Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  h1, h2, h3 { font-family: Montserrat, Inter, sans-serif; color: var(--navy); line-height: 1.2; margin: 0 0 .6em; }
+  h1 { font-size: clamp(30px, 4.6vw, 52px); font-weight: 800; }
+  h2 { font-size: clamp(24px, 3vw, 34px); font-weight: 700; }
+  h3 { font-size: 20px; font-weight: 700; }
+  a { color: var(--navy-2); }
+  img { max-width: 100%; height: auto; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 22px; }
+  section { padding: 72px 0; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 600 13px/1 Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+  .eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
+  .lead { font-size: 19px; color: var(--muted); max-width: 720px; }
+  .btn { display: inline-block; padding: 13px 26px; border-radius: 999px; font: 600 15px/1 Montserrat, sans-serif; text-decoration: none; transition: .2s; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #8f0e15; }
+  .btn-ghost { border: 2px solid currentColor; color: #fff; }
+  .btn-ghost:hover { background: #fff; color: var(--navy); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+  .grid { display: grid; gap: 22px; }
+  .g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .page-head { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; padding: 64px 0 56px; }
+  .page-head h1 { color: #fff; margin: 0; }
+  .page-head .eyebrow { color: #ff8a8f; } .page-head .eyebrow::before { background: #ff8a8f; }
+  .prose { max-width: 780px; } .prose p { margin: 0 0 1em; }
+  .tag { display: inline-block; font: 600 13px/1 Montserrat, sans-serif; color: var(--red); background: #fbe9ea; padding: 6px 10px; border-radius: 6px; }
+
+  .site-header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 74px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand span { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand b { font: 800 20px Montserrat, sans-serif; color: var(--navy); letter-spacing: .04em; }
+  .brand small { font-size: 12.5px; color: var(--muted); }
+  .nav { display: flex; align-items: center; gap: 4px; }
+  .nav a { white-space: nowrap; padding: 8px 10px; border-radius: 8px; text-decoration: none; color: var(--ink); font-weight: 500; font-size: 15.5px; }
+  .nav a:hover, .nav a.active { color: var(--red); }
+  .nav a.lang { margin-left: 8px; border: 1.5px solid var(--navy); color: var(--navy); font: 700 13px/1 Montserrat, sans-serif; padding: 8px 11px; }
+  .nav a.lang:hover { background: var(--navy); color: #fff; }
+  .menu-toggle, .burger { display: none; }
+  @media (max-width: 1240px) { .brand small { display: none; } }
+  @media (max-width: 1080px) {
+    .burger { display: block; width: 40px; height: 40px; position: relative; cursor: pointer; }
+    .burger span, .burger span::before, .burger span::after { position: absolute; left: 8px; width: 24px; height: 2px; background: var(--navy); content: ''; transition: .2s; }
+    .burger span { top: 19px; } .burger span::before { top: -7px; left: 0; } .burger span::after { top: 7px; left: 0; }
+    .nav { position: absolute; top: 74px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 22px 18px; display: none; }
+    .menu-toggle:checked ~ .nav { display: flex; }
+    .nav a.lang { margin: 8px 0 0; text-align: center; }
+  }
+
+  .site-footer { background: var(--navy); color: #c9d2e6; padding: 48px 0 24px; font-size: 15px; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
+  .foot-brand { display: flex; gap: 16px; align-items: flex-start; max-width: 520px; }
+  .foot-brand b { color: #fff; }
+  .foot-brand p { margin: 0; }
+  .foot-nav { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 28px; }
+  .foot-nav a { color: #c9d2e6; text-decoration: none; } .foot-nav a:hover { color: #fff; }
+  .copy { border-top: 1px solid rgba(255,255,255,.12); margin-top: 30px; padding-top: 18px; font-size: 13.5px; }
+</style>
