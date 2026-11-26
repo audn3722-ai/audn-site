@@ -13,7 +13,7 @@ const people = (await getCollection('leadership')).sort((a, b) => a.data.order -
   <PageHead lang={lang} title={d.nav.leadership} path="/about/leadership/" />
   <section>
     <div class="wrap grid g2">
-      {people.map((p) => <PersonCard name={p.data.name} role={(lang === 'kg' && p.data.role_kg) || p.data.role_ru} photo={p.data.photo} />)}
+      {people.map((p) => <PersonCard name={p.data.name} role={(lang === 'kg' && p.data.role_kg) || p.data.role_ru} photo={p.data.photo} level={2} />)}
     </div>
   </section>
 </Base>
