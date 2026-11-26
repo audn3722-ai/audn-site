@@ -21,8 +21,8 @@ const items = await Promise.all(list.map(async (x) => ({ q: x.data.question, C: 
 </Base>
 <style>
   .faq { max-width: 860px; display: grid; gap: 12px; }
-  details { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 0 22px; }
-  summary { cursor: pointer; list-style: none; padding: 18px 0; font: 700 17px Montserrat, sans-serif; color: var(--navy); display: flex; justify-content: space-between; gap: 16px; }
+  details { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 22px; }
+  summary { cursor: pointer; list-style: none; padding: 18px 0; font: 700 17px var(--serif); color: var(--navy); display: flex; justify-content: space-between; gap: 16px; }
   summary::after { content: '+'; color: var(--red); font-size: 22px; line-height: 1; }
   details[open] summary::after { content: '−'; }
   summary::-webkit-details-marker { display: none; }
