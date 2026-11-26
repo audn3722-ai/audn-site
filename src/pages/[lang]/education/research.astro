@@ -1,0 +1,22 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import DocList from '../../../components/DocList.astro';
+import { t, langs, type Lang } from '../../../i18n';
+export const getStaticPaths = () => langs.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const d = t[lang];
+const intro = {
+  ru: 'Публикации преподавателей и студентов, практические проекты, конференции и учебные исследования университета. Материалы добавляются через админку в раздел «Документы» с категорией «Исследования и публикации».',
+  kg: 'Окутуучулардын жана студенттердин басылмалары, практикалык долбоорлор, конференциялар жана университеттин окуу изилдөөлөрү. Материалдар админка аркылуу «Документтер» бөлүмүнө «Изилдөөлөр жана басылмалар» категориясы менен кошулат.',
+}[lang];
+---
+<Base lang={lang} title={d.nav.researchPage} path="/education/research/">
+  <PageHead lang={lang} title={d.nav.researchPage} path="/education/research/" />
+  <section>
+    <div class="wrap">
+      <p class="lead">{intro}</p>
+      <div style="margin-top:32px"><DocList lang={lang} categories={['research']} /></div>
+    </div>
+  </section>
+</Base>
